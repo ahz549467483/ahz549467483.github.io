@@ -643,6 +643,160 @@
   
 
   <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://ahz549467483.github.io/2018/01/22/buffer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Joker Chen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/myavator.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码猴之家">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/22/buffer/" itemprop="url">通过node 中rpc通讯的的buffer来认识ascii码，unicode， 以及utf8编码方式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-22T12:39:04+08:00">
+                2018-01-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/buffer/" itemprop="url" rel="index">
+                    <span itemprop="name">buffer</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/01/22/buffer/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/01/22/buffer/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="通过node-中rpc通讯的的buffer来认识ascii码，unicode，-以及utf8编码方式"><a href="#通过node-中rpc通讯的的buffer来认识ascii码，unicode，-以及utf8编码方式" class="headerlink" title="通过node 中rpc通讯的的buffer来认识ascii码，unicode， 以及utf8编码方式"></a>通过node 中rpc通讯的的buffer来认识ascii码，unicode， 以及utf8编码方式</h2><p>###rpc<br>在前端的业务逻辑里主要是客户端和服务端的通讯，主要通过ajax，websocket等方式，而在服务端直接的通讯一般我们认定为rpc通讯</p>
+<h3 id="buffer"><a href="#buffer" class="headerlink" title="buffer"></a>buffer</h3><p>在rpc通讯的过程中所需要的数据必须是二进制的，buffer其实就是一个二进制的数据流载体，用来存放二进制数据， buffer能够将二进制数据以不同的编码方式进行存储，比如 ascii, utf-8, base64等主流方式，默认是使用utf-8的方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">const buffer = new Buffer.form(xxxx, type)</div></pre></td></tr></table></figure>
+<p>那么utf-8又是什么他们跟unicode 和 ascii码又有什么联系</p>
+<h3 id="ascii码"><a href="#ascii码" class="headerlink" title="ascii码"></a>ascii码</h3><p>我们到知道，计算机的最原始的编码方式就是 01 这种二进制的方式进行编程的，在使用折中二进制编码方式来表示我们的需要展现的内容文字，每个字节需要8个这样的二进制组成的，由于计算机这种技术是国外发明的，2的8次方也就是256 完全能够将24个字母全部概括了，这就是ascii码的概念</p>
+<p>问题来，在计算机发展后，全球不同于语言，如何才能让计算机也能够完全真确的识别更多的字符呢，ascii这种方式就远远不能够实现了，于是unicode就被提出来了</p>
+<h3 id="unicode"><a href="#unicode" class="headerlink" title="unicode"></a>unicode</h3><p>unicode像是一个大词典，每个unicode字符都对应一个二进制，比如说”帅“的unicode是\u5e05，对应的二进制是101111000000101, 长度是15, 也就是说这个帅子至少需要2个字节组成，但是我们不是很清楚通过两个字节改如何识别，是两个独立的字节表示两个字符，还是两个字节表示一个字符，所以我们需要一个用来规范的编码方式，进行约定识别，这时utf-8 和 utf-16等编码方式就应运而生。</p>
+<h3 id="utf-8"><a href="#utf-8" class="headerlink" title="utf-8"></a>utf-8</h3><p>就拿utf-8来举例子，这也是我们最常用的一个编码方式，该编码方式是如何进行允运作的呢，我们来看下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">编码规则如下：</div><div class="line"></div><div class="line">Unicode 十六进制码点范围        UTF-8 二进制</div><div class="line">0000 0000 - 0000 007F        0xxxxxxx</div><div class="line">0000 0080 - 0000 07FF        110xxxxx 10xxxxxx</div><div class="line">0000 0800 - 0000 FFFF        1110xxxx 10xxxxxx 10xxxxxx</div><div class="line">0001 0000 - 0010 FFFF        11110xxx 10xxxxxx 10xxxxxx 10xxxxxx</div></pre></td></tr></table></figure>
+<p>根据上面的规则表我们不难发现，从低到高表示unicode需要几个字符能够表示，而且在通过utf-8编码过后，会形成一个比较规则的格式，为几个字符，头字节头部固定就会有几个1以及一个0， 而后续字符都是以10为开头，让后我们将16进制unicode码转化成2进制从右往左插入到对应的空缺，不足已0填充，就是最后能够通过utf-8识别的 二进制码, 这样通过头字符就知道是后续几个字节表示的是一个字符还是两个。上面刷子是在第三层也即是三个字符组成，填补完为 11100101 10111000 10000101</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://ahz549467483.github.io/2016/12/22/webpack3的常用配置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1083,7 +1237,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1094,7 +1248,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1105,7 +1259,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
